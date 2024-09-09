@@ -7,12 +7,11 @@ import UserListDialog from "./UserListDialog";
 import { UserButton } from "../ui/button";
 import { useEffect, useState } from "react";
 
-// Define the type for Conversation
 type Conversation = {
   _id: string;
   name: string;
   isActive: boolean;
-  // Add other properties of Conversation as needed
+  type: "personal" | "group"; // Add the type of conversation
 };
 
 const LeftPanel: React.FC = () => {
@@ -21,9 +20,12 @@ const LeftPanel: React.FC = () => {
 
   // State for conversations
   const [conversations, setConversations] = useState<Conversation[]>([
-    { _id: "1", name: "John Doe", isActive: true },
-    { _id: "2", name: "Jane Smith", isActive: false },
+    { _id: "1", name: "John Doe", isActive: true, type: "personal" },
+    { _id: "2", name: "Jane Smith", isActive: false, type: "personal" },
+    { _id: "3", name: "Team Alpha", isActive: true, type: "group" },
+    { _id: "4", name: "Project Beta", isActive: false, type: "group" },
   ]);
+
   const [selectedConversation, setSelectedConversation] = useState<Conversation | null>(null);
 
   // State for filter dropdown visibility and filter type
@@ -41,9 +43,12 @@ const LeftPanel: React.FC = () => {
 
   // Apply filter to conversations
   const filteredConversations = activeFilter
-    ? conversations.filter((conversation) =>
-        activeFilter === "active" ? conversation.isActive : !conversation.isActive
-      )
+    ? conversations.filter((conversation) => {
+        if (activeFilter === "personal") return conversation.type === "personal";
+        if (activeFilter === "group") return conversation.type === "group";
+        if (activeFilter === "active") return conversation.isActive;
+        return true; // Show all conversations by default
+      })
     : conversations;
 
   // Ensure selectedConversation is in the filtered list
@@ -91,15 +96,21 @@ const LeftPanel: React.FC = () => {
             <div className="absolute top-12 right-3 bg-white shadow-lg rounded border border-gray-200 p-2">
               <div
                 className="cursor-pointer hover:bg-gray-100 px-3 py-2"
-                onClick={() => handleFilterChange("active")}
+                onClick={() => handleFilterChange("personal")}
               >
-                Active Conversations
+                Personal Chat (6)
               </div>
               <div
                 className="cursor-pointer hover:bg-gray-100 px-3 py-2"
-                onClick={() => handleFilterChange("inactive")}
+                onClick={() => handleFilterChange("group")}
               >
-                Inactive Conversations
+                Group Chat (3)
+              </div>
+              <div
+                className="cursor-pointer hover:bg-gray-100 px-3 py-2"
+                onClick={() => handleFilterChange("active")}
+              >
+                Active Conversations
               </div>
               <div
                 className="cursor-pointer hover:bg-gray-100 px-3 py-2"
