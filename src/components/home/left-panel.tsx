@@ -5,9 +5,10 @@ import ThemeSwitch from "../theme-switch";
 import Conversation from "../conversation";
 import UserListDialog from "./UserListDialog";
 import { UserButton } from "../ui/button";
+import RequestBar from '../home/RequestBar';
 import { useEffect, useState } from "react";
 
-type Conversation = {
+type ConversationType = {
   _id: string;
   name: string;
   isActive: boolean;
@@ -19,18 +20,23 @@ const LeftPanel: React.FC = () => {
   const isLoading = false;
 
   // State for conversations
-  const [conversations, setConversations] = useState<Conversation[]>([
+  const [conversations, setConversations] = useState<ConversationType[]>([
     { _id: "1", name: "John Doe", isActive: true, type: "personal" },
     { _id: "2", name: "Jane Smith", isActive: false, type: "personal" },
     { _id: "3", name: "Team Alpha", isActive: true, type: "group" },
     { _id: "4", name: "Project Beta", isActive: false, type: "group" },
   ]);
 
-  const [selectedConversation, setSelectedConversation] = useState<Conversation | null>(null);
+  const [selectedConversation, setSelectedConversation] = useState<ConversationType | null>(null);
 
   // State for filter dropdown visibility and filter type
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [activeFilter, setActiveFilter] = useState<string | null>(null);
+
+  // Dynamic counts
+  const personalCount = conversations.filter(c => c.type === "personal").length;
+  const groupCount = conversations.filter(c => c.type === "group").length;
+  const activeCount = conversations.filter(c => c.isActive).length;
 
   // Toggle filter dropdown
   const toggleFilter = () => setIsFilterOpen(!isFilterOpen);
@@ -93,27 +99,27 @@ const LeftPanel: React.FC = () => {
 
           {/* Filter Dropdown */}
           {isFilterOpen && (
-            <div className="absolute top-12 right-3 bg-white shadow-lg rounded border border-gray-200 p-2">
+            <div className="absolute top-12 right-3 bg-gray-800 text-white shadow-lg rounded border border-gray-600 p-2">
               <div
-                className="cursor-pointer hover:bg-gray-100 px-3 py-2"
+                className="cursor-pointer hover:bg-gray-700 px-3 py-2"
                 onClick={() => handleFilterChange("personal")}
               >
-                Personal Chat (6)
+                Personal Chat ({personalCount})
               </div>
               <div
-                className="cursor-pointer hover:bg-gray-100 px-3 py-2"
+                className="cursor-pointer hover:bg-gray-700 px-3 py-2"
                 onClick={() => handleFilterChange("group")}
               >
-                Group Chat (3)
+                Group Chat ({groupCount})
               </div>
               <div
-                className="cursor-pointer hover:bg-gray-100 px-3 py-2"
+                className="cursor-pointer hover:bg-gray-700 px-3 py-2"
                 onClick={() => handleFilterChange("active")}
               >
-                Active Conversations
+                Active Conversations ({activeCount})
               </div>
               <div
-                className="cursor-pointer hover:bg-gray-100 px-3 py-2"
+                className="cursor-pointer hover:bg-gray-700 px-3 py-2"
                 onClick={() => handleFilterChange(null)}
               >
                 All Conversations
